@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Majid Ali Shah — Senior Web Developer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #0a0a0f;
+      --surface:  #111118;
+      --card:     #16161f;
+      --border:   #ffffff0f;
+      --accent:   #7fffb2;
+      --accent2:  #3b82f6;
+      --text:     #e8e8f0;
+      --muted:    #6b6b80;
+      --glow:     #7fffb240;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Mono', monospace;
+      font-size: 15px;
+      line-height: 1.7;
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* ── Custom Cursor ── */
+    .cursor {
+      position: fixed; top: 0; left: 0; width: 10px; height: 10px;
+      background: var(--accent); border-radius: 50%;
+      pointer-events: none; z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: transform .15s ease, background .3s ease;
+    }
+    .cursor-ring {
+      position: fixed; top: 0; left: 0; width: 36px; height: 36px;
+      border: 1px solid var(--accent); border-radius: 50%;
+      pointer-events: none; z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: transform .4s ease, border-color .3s ease;
+      opacity: .5;
+    }
+    body:hover .cursor { transform: translate(-50%,-50%) scale(1); }
+
+    /* ── Noise overlay ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+      opacity: .03;
+      pointer-events: none;
+      z-index: 9990;
+    }
+
+    /* ── Grid lines bg ── */
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.2rem 3rem;
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(20px);
+      background: #0a0a0fcc;
+    }
+    .nav-logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800; font-size: 1.1rem;
+      letter-spacing: .05em;
+      color: var(--accent);
+    }
+    .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+    .nav-links a {
+      color: var(--muted); text-decoration: none;
+      font-size: .75rem; letter-spacing: .12em; text-transform: uppercase;
+      transition: color .25s;
+    }
+    .nav-links a:hover { color: var(--accent); }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 8rem 3rem 4rem;
+      position: relative; z-index: 1;
+      max-width: 1200px; margin: 0 auto;
+    }
+    .hero-tag {
+      font-size: .7rem; letter-spacing: .2em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 1.5rem;
+      opacity: 0; animation: fadeUp .6s .2s forwards;
+    }
+    .hero-tag span { display: inline-block; width: 2rem; height: 1px; background: var(--accent); vertical-align: middle; margin-right: .75rem; }
+
+    h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(3.5rem, 9vw, 8rem);
+      font-weight: 800; line-height: .95;
+      letter-spacing: -.03em;
+      opacity: 0; animation: fadeUp .7s .35s forwards;
+    }
+    h1 em {
+      font-family: 'Instrument Serif', serif;
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .hero-sub {
+      margin-top: 2rem; max-width: 560px;
+      color: var(--muted); font-size: .9rem; line-height: 1.8;
+      opacity: 0; animation: fadeUp .7s .5s forwards;
+    }
+
+    .hero-cta {
+      margin-top: 3rem; display: flex; gap: 1.2rem; flex-wrap: wrap;
+      opacity: 0; animation: fadeUp .7s .65s forwards;
+    }
+    .btn {
+      display: inline-flex; align-items: center; gap: .5rem;
+      padding: .85rem 2rem; border-radius: 4px;
+      font-family: 'DM Mono', monospace; font-size: .78rem;
+      letter-spacing: .08em; text-transform: uppercase;
+      text-decoration: none; transition: all .25s; cursor: none;
+    }
+    .btn-primary {
+      background: var(--accent); color: #0a0a0f; font-weight: 600;
+      box-shadow: 0 0 30px var(--glow);
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 50px var(--glow); }
+    .btn-ghost {
+      border: 1px solid var(--border); color: var(--text);
+    }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+    .hero-scroll {
+      position: absolute; bottom: 2.5rem; left: 3rem;
+      display: flex; align-items: center; gap: .75rem;
+      color: var(--muted); font-size: .68rem; letter-spacing: .15em; text-transform: uppercase;
+      opacity: 0; animation: fadeUp .7s .8s forwards;
+    }
+    .scroll-line { width: 40px; height: 1px; background: var(--muted); }
+
+    /* ── Floating accent orbs ── */
+    .orb {
+      position: absolute; border-radius: 50%;
+      filter: blur(80px); pointer-events: none; z-index: 0;
+    }
+    .orb1 {
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, #7fffb220, transparent 70%);
+      top: 10%; right: -100px;
+      animation: float 8s ease-in-out infinite;
+    }
+    .orb2 {
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, #3b82f615, transparent 70%);
+      bottom: 15%; left: -80px;
+      animation: float 10s ease-in-out infinite reverse;
+    }
+
+    /* ── SECTIONS ── */
+    section { padding: 6rem 3rem; max-width: 1200px; margin: 0 auto; position: relative; z-index: 1; }
+
+    .section-label {
+      font-size: .68rem; letter-spacing: .2em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 1rem;
+      display: flex; align-items: center; gap: .75rem;
+    }
+    .section-label::after { content: ''; flex: 1; max-width: 60px; height: 1px; background: var(--accent); }
+
+    h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 800; line-height: 1.1;
+      letter-spacing: -.02em; margin-bottom: 3rem;
+    }
+
+    /* ── SKILLS ── */
+    #skills { border-top: 1px solid var(--border); }
+
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: .75rem;
+    }
+    .skill-pill {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: .75rem 1rem;
+      font-size: .72rem; letter-spacing: .06em;
+      text-align: center;
+      transition: all .25s;
+      color: var(--muted);
+    }
+    .skill-pill:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: #7fffb208;
+      transform: translateY(-2px);
+    }
+
+    /* ── EXPERIENCE ── */
+    #experience { border-top: 1px solid var(--border); }
+
+    .timeline { display: flex; flex-direction: column; gap: 0; }
+    .timeline-item {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 2rem;
+      padding: 2rem 0;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+    .timeline-item:last-child { border-bottom: none; }
+    .timeline-date {
+      font-size: .72rem; color: var(--muted); letter-spacing: .06em;
+      padding-top: .25rem;
+    }
+    .timeline-date strong { display: block; color: var(--accent); font-size: .7rem; margin-bottom: .3rem; }
+    .timeline-content {}
+    .timeline-role {
+      font-family: 'Syne', sans-serif; font-weight: 700;
+      font-size: 1.15rem; margin-bottom: .25rem;
+    }
+    .timeline-company {
+      color: var(--accent); font-size: .78rem; margin-bottom: .75rem;
+    }
+    .timeline-desc { color: var(--muted); font-size: .82rem; line-height: 1.8; }
+    .timeline-tags {
+      display: flex; flex-wrap: wrap; gap: .4rem; margin-top: 1rem;
+    }
+    .tag {
+      background: var(--surface); border: 1px solid var(--border);
+      color: var(--muted); font-size: .65rem; padding: .3rem .65rem;
+      border-radius: 3px; letter-spacing: .06em;
+    }
+
+    /* ── PROJECTS ── */
+    #projects { border-top: 1px solid var(--border); }
+
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 1.25rem;
+    }
+    .project-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 2rem;
+      position: relative; overflow: hidden;
+      transition: all .3s;
+    }
+    .project-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      transform: scaleX(0); transform-origin: left;
+      transition: transform .3s;
+    }
+    .project-card:hover { transform: translateY(-4px); border-color: #ffffff18; }
+    .project-card:hover::before { transform: scaleX(1); }
+
+    .project-num {
+      font-size: .65rem; color: var(--accent); letter-spacing: .15em;
+      margin-bottom: 1.25rem;
+    }
+    .project-title {
+      font-family: 'Syne', sans-serif; font-weight: 700;
+      font-size: 1.1rem; margin-bottom: .75rem;
+    }
+    .project-desc { color: var(--muted); font-size: .8rem; line-height: 1.8; margin-bottom: 1.5rem; }
+    .project-link {
+      display: inline-flex; align-items: center; gap: .4rem;
+      color: var(--accent); font-size: .72rem; letter-spacing: .08em;
+      text-decoration: none; text-transform: uppercase;
+      transition: gap .2s;
+    }
+    .project-link:hover { gap: .8rem; }
+
+    /* ── ABOUT ── */
+    #about { border-top: 1px solid var(--border); }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem; align-items: start;
+    }
+    .about-text p { color: var(--muted); font-size: .87rem; line-height: 1.9; margin-bottom: 1.25rem; }
+    .about-stats {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;
+    }
+    .stat-box {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 8px; padding: 1.75rem;
+      transition: border-color .25s;
+    }
+    .stat-box:hover { border-color: var(--accent); }
+    .stat-num {
+      font-family: 'Syne', sans-serif; font-weight: 800;
+      font-size: 2.5rem; color: var(--accent); line-height: 1;
+      margin-bottom: .4rem;
+    }
+    .stat-label { color: var(--muted); font-size: .72rem; letter-spacing: .08em; }
+
+    /* ── EDUCATION ── */
+    .edu-box {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 8px; padding: 2rem; margin-top: 1.5rem;
+      display: flex; align-items: center; gap: 1.5rem;
+    }
+    .edu-icon {
+      width: 52px; height: 52px; background: var(--surface);
+      border: 1px solid var(--border); border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem; flex-shrink: 0;
+    }
+    .edu-degree { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem; }
+    .edu-school { color: var(--muted); font-size: .78rem; margin-top: .2rem; }
+
+    /* ── CONTACT ── */
+    #contact {
+      border-top: 1px solid var(--border);
+      text-align: center;
+    }
+    #contact h2 { margin-bottom: 1rem; }
+    #contact p { color: var(--muted); max-width: 480px; margin: 0 auto 2.5rem; font-size: .87rem; }
+    .contact-links {
+      display: flex; justify-content: center; flex-wrap: wrap; gap: 1rem;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2rem 3rem;
+      display: flex; justify-content: space-between; align-items: center;
+      color: var(--muted); font-size: .7rem; letter-spacing: .08em;
+      position: relative; z-index: 1;
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50%       { transform: translateY(-20px) scale(1.04); }
+    }
+
+    .reveal {
+      opacity: 0; transform: translateY(30px);
+      transition: opacity .7s ease, transform .7s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── Divider ── */
+    .divider {
+      width: 100%; height: 1px; background: var(--border);
+      position: relative; z-index: 1;
+    }
+
+    /* ── MOBILE ── */
+    @media (max-width: 768px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { display: none; }
+      #hero, section { padding-left: 1.5rem; padding-right: 1.5rem; }
+      h1 { font-size: clamp(2.8rem, 13vw, 5rem); }
+      .timeline-item { grid-template-columns: 1fr; gap: .5rem; }
+      .about-grid { grid-template-columns: 1fr; gap: 2rem; }
+      .projects-grid { grid-template-columns: 1fr; }
+      footer { flex-direction: column; gap: .75rem; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Custom Cursor -->
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-logo">M.A.S</div>
+    <ul class="nav-links">
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <div style="position:relative; overflow:hidden;">
+    <div class="orb orb1"></div>
+    <div class="orb orb2"></div>
+    <section id="hero">
+      <p class="hero-tag"><span></span>Available for new opportunities</p>
+      <h1>Muhammad<br><em>Majid</em><br>Ali Shah</h1>
+      <p class="hero-sub">Senior Web Developer with 6+ years crafting dynamic web applications, custom WordPress solutions, and full-stack platforms that are clean, scalable, and user-centric.</p>
+      <div class="hero-cta">
+        <a href="#projects" class="btn btn-primary">View My Work →</a>
+        <a href="#contact" class="btn btn-ghost">Get In Touch</a>
+      </div>
+      <div class="hero-scroll">
+        <span class="scroll-line"></span> Scroll to explore
+      </div>
+    </section>
+  </div>
+
+  <!-- SKILLS -->
+  <section id="skills">
+    <p class="section-label reveal">Tech Stack</p>
+    <h2 class="reveal">What I work with</h2>
+    <div class="skills-grid">
+      <div class="skill-pill reveal">PHP</div>
+      <div class="skill-pill reveal">JavaScript</div>
+      <div class="skill-pill reveal">WordPress</div>
+      <div class="skill-pill reveal">Laravel</div>
+      <div class="skill-pill reveal">CodeIgniter</div>
+      <div class="skill-pill reveal">React</div>
+      <div class="skill-pill reveal">Next.js</div>
+      <div class="skill-pill reveal">Node.js</div>
+      <div class="skill-pill reveal">Express.js</div>
+      <div class="skill-pill reveal">MongoDB</div>
+      <div class="skill-pill reveal">MySQL</div>
+      <div class="skill-pill reveal">REST APIs</div>
+      <div class="skill-pill reveal">Git</div>
+      <div class="skill-pill reveal">WooCommerce</div>
+      <div class="skill-pill reveal">Custom Plugins</div>
+      <div class="skill-pill reveal">Custom Themes</div>
+    </div>
+  </section>
+
+  <!-- EXPERIENCE -->
+  <section id="experience">
+    <p class="section-label reveal">Career</p>
+    <h2 class="reveal">Work Experience</h2>
+    <div class="timeline">
+
+      <div class="timeline-item reveal">
+        <div class="timeline-date">
+          <strong>Current Role</strong>
+          Apr 2025 — Present<br/>Islamabad · On-site<br/>Full-time
+        </div>
+        <div class="timeline-content">
+          <div class="timeline-role">Senior Web Developer</div>
+          <div class="timeline-company">Hybrid Mediaworks</div>
+          <div class="timeline-desc">Leading development of complex web solutions, spearheading custom WordPress builds, and driving technical strategy for client projects across diverse industries.</div>
+          <div class="timeline-tags">
+            <span class="tag">WordPress</span>
+            <span class="tag">PHP</span>
+            <span class="tag">Custom Themes</span>
+            <span class="tag">Custom Plugins</span>
+            <span class="tag">JavaScript</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-item reveal">
+        <div class="timeline-date">
+          <strong>2 yrs 6 mos</strong>
+          Mar 2022 — Aug 2024<br/>Islamabad · On-site<br/>Full-time
+        </div>
+        <div class="timeline-content">
+          <div class="timeline-role">Senior Web Developer</div>
+          <div class="timeline-company">Virtions</div>
+          <div class="timeline-desc">Architected and delivered scalable web applications for multiple clients. Mentored junior developers, reviewed code quality, and led full-stack feature development across PHP and JavaScript ecosystems.</div>
+          <div class="timeline-tags">
+            <span class="tag">Git</span>
+            <span class="tag">Web App Development</span>
+            <span class="tag">Laravel</span>
+            <span class="tag">React</span>
+            <span class="tag">MySQL</span>
+            <span class="tag">REST APIs</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-item reveal">
+        <div class="timeline-date">
+          <strong>11 mos</strong>
+          May 2021 — Mar 2022<br/>Rawalpindi · On-site<br/>Full-time
+        </div>
+        <div class="timeline-content">
+          <div class="timeline-role">Software Engineer</div>
+          <div class="timeline-company">Webholden</div>
+          <div class="timeline-desc">Developed and maintained feature-rich web applications, implementing robust backend systems and ensuring performance-optimized front-end delivery across various client projects.</div>
+          <div class="timeline-tags">
+            <span class="tag">Git</span>
+            <span class="tag">Web App Dev</span>
+            <span class="tag">PHP</span>
+            <span class="tag">JavaScript</span>
+            <span class="tag">MySQL</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-item reveal">
+        <div class="timeline-date">
+          <strong>2 yrs 1 mo</strong>
+          May 2019 — May 2021<br/>Islamabad · On-site<br/>Full-time
+        </div>
+        <div class="timeline-content">
+          <div class="timeline-role">Web Developer</div>
+          <div class="timeline-company">Vizz Web Solutions Pvt. Ltd</div>
+          <div class="timeline-desc">Built and shipped dynamic web applications for clients using CodeIgniter and PHP. Delivered full project lifecycles from requirements gathering to deployment and maintenance.</div>
+          <div class="timeline-tags">
+            <span class="tag">CodeIgniter</span>
+            <span class="tag">Web App Dev</span>
+            <span class="tag">PHP</span>
+            <span class="tag">MySQL</span>
+            <span class="tag">JavaScript</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-item reveal">
+        <div class="timeline-date">
+          <strong>9 mos</strong>
+          Sep 2018 — May 2019<br/>Islamabad<br/>Full-time
+        </div>
+        <div class="timeline-content">
+          <div class="timeline-role">PHP Developer</div>
+          <div class="timeline-company">Neelumsoft</div>
+          <div class="timeline-desc">Kick-started professional career building PHP-based web applications, gaining foundational experience with CodeIgniter and database-driven solutions. A great early experience shaping best practices.</div>
+          <div class="timeline-tags">
+            <span class="tag">PHP</span>
+            <span class="tag">CodeIgniter</span>
+            <span class="tag">Web App Dev</span>
+            <span class="tag">MySQL</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- PROJECTS -->
+  <section id="projects">
+    <p class="section-label reveal">Portfolio</p>
+    <h2 class="reveal">Featured Projects</h2>
+    <div class="projects-grid">
+
+      <div class="project-card reveal">
+        <div class="project-num">01 — WordPress</div>
+        <div class="project-title">Custom E-Commerce Platform</div>
+        <div class="project-desc">A fully bespoke WooCommerce build with custom plugins for real-time inventory sync, advanced product filtering, and headless checkout flow. Achieved 40% faster page loads vs the previous theme.</div>
+        <div class="timeline-tags" style="margin-bottom:1.5rem;">
+          <span class="tag">WordPress</span><span class="tag">WooCommerce</span><span class="tag">PHP</span><span class="tag">JavaScript</span>
+        </div>
+        <a href="#" class="project-link">View Case Study →</a>
+      </div>
+
+      <div class="project-card reveal">
+        <div class="project-num">02 — Full-Stack</div>
+        <div class="project-title">Multi-Tenant SaaS Dashboard</div>
+        <div class="project-desc">Built a role-based SaaS platform using Laravel and React with JWT authentication, real-time notifications via WebSockets, and a modular plugin architecture for client extensibility.</div>
+        <div class="timeline-tags" style="margin-bottom:1.5rem;">
+          <span class="tag">Laravel</span><span class="tag">React</span><span class="tag">MySQL</span><span class="tag">WebSockets</span>
+        </div>
+        <a href="#" class="project-link">View Case Study →</a>
+      </div>
+
+      <div class="project-card reveal">
+        <div class="project-num">03 — API</div>
+        <div class="project-title">RESTful API for Mobile App</div>
+        <div class="project-desc">Designed and developed a high-performance REST API using Node.js and Express backed by MongoDB. Integrated OAuth 2.0 and served as the backbone for a cross-platform mobile application.</div>
+        <div class="timeline-tags" style="margin-bottom:1.5rem;">
+          <span class="tag">Node.js</span><span class="tag">Express</span><span class="tag">MongoDB</span><span class="tag">OAuth</span>
+        </div>
+        <a href="#" class="project-link">View Case Study →</a>
+      </div>
+
+      <div class="project-card reveal">
+        <div class="project-num">04 — Next.js</div>
+        <div class="project-title">Corporate Website with CMS</div>
+        <div class="project-desc">Delivered a Next.js corporate site with a headless WordPress CMS backend, SSG/SSR hybrid rendering, and a custom blocks system enabling non-technical editors to build pages visually.</div>
+        <div class="timeline-tags" style="margin-bottom:1.5rem;">
+          <span class="tag">Next.js</span><span class="tag">WordPress</span><span class="tag">Headless CMS</span><span class="tag">SSR</span>
+        </div>
+        <a href="#" class="project-link">View Case Study →</a>
+      </div>
+
+      <div class="project-card reveal">
+        <div class="project-num">05 — CodeIgniter</div>
+        <div class="project-title">Real Estate Management System</div>
+        <div class="project-desc">A comprehensive property listing and CRM system built with CodeIgniter, featuring advanced search filters, agent dashboards, lead tracking, and automated email workflows.</div>
+        <div class="timeline-tags" style="margin-bottom:1.5rem;">
+          <span class="tag">CodeIgniter</span><span class="tag">PHP</span><span class="tag">MySQL</span><span class="tag">jQuery</span>
+        </div>
+        <a href="#" class="project-link">View Case Study →</a>
+      </div>
+
+      <div class="project-card reveal">
+        <div class="project-num">06 — WordPress Plugin</div>
+        <div class="project-title">Custom Booking & Scheduling Plugin</div>
+        <div class="project-desc">Developed a zero-dependency WordPress plugin for appointment booking with Google Calendar sync, SMS reminders via Twilio, and a drag-and-drop availability manager for service providers.</div>
+        <div class="timeline-tags" style="margin-bottom:1.5rem;">
+          <span class="tag">WordPress</span><span class="tag">PHP</span><span class="tag">Google API</span><span class="tag">Twilio</span>
+        </div>
+        <a href="#" class="project-link">View Case Study →</a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <p class="section-label reveal">About Me</p>
+    <h2 class="reveal">The developer<br>behind the code</h2>
+    <div class="about-grid">
+      <div class="about-text reveal">
+        <p>I'm a Senior Web Developer based in Islamabad, Pakistan, with 6+ years of hands-on experience designing, developing, and maintaining dynamic websites and web applications.</p>
+        <p>I specialize in WordPress custom themes & plugins, PHP, JavaScript, React, Node.js, CodeIgniter, Laravel, MongoDB, and MySQL — from crafting custom CMS solutions to building robust APIs and full-stack platforms.</p>
+        <p>I focus on clean, scalable code and seamless user experiences. I'm passionate about solving problems, optimizing performance, and turning ideas into high-impact digital products.</p>
+        <div class="edu-box">
+          <div class="edu-icon">🎓</div>
+          <div>
+            <div class="edu-degree">BS in Software Engineering</div>
+            <div class="edu-school">Pakistan</div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="about-stats reveal">
+          <div class="stat-box">
+            <div class="stat-num">6+</div>
+            <div class="stat-label">Years of Experience</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-num">5</div>
+            <div class="stat-label">Companies Worked</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-num">50+</div>
+            <div class="stat-label">Projects Delivered</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-num">16+</div>
+            <div class="stat-label">Tech Skills</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <p class="section-label reveal" style="justify-content:center;">Contact</p>
+    <h2 class="reveal">Let's build<br>something great</h2>
+    <p class="reveal">Open to freelance projects, full-time opportunities, and interesting collaborations. Drop me a message and let's talk.</p>
+    <div class="contact-links reveal">
+      <a href="mailto:majidalishah37@gmail.com" class="btn btn-primary">majidalishah37@gmail.com</a>
+      <a href="https://www.linkedin.com/in/majid-ali-shah37" target="_blank" class="btn btn-ghost">LinkedIn Profile</a>
+      <a href="https://github.com/" target="_blank" class="btn btn-ghost">GitHub</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <span>© 2025 Muhammad Majid Ali Shah</span>
+    <span>Senior Web Developer · Islamabad, Pakistan</span>
+  </footer>
+
+  <script>
+    // Custom cursor
+    const cursor = document.getElementById('cursor');
+    const ring   = document.getElementById('cursorRing');
+    document.addEventListener('mousemove', e => {
+      cursor.style.left = e.clientX + 'px';
+      cursor.style.top  = e.clientY + 'px';
+      ring.style.left   = e.clientX + 'px';
+      ring.style.top    = e.clientY + 'px';
+    });
+    document.querySelectorAll('a, button').forEach(el => {
+      el.addEventListener('mouseenter', () => {
+        cursor.style.transform = 'translate(-50%,-50%) scale(2.5)';
+        ring.style.transform   = 'translate(-50%,-50%) scale(1.5)';
+      });
+      el.addEventListener('mouseleave', () => {
+        cursor.style.transform = 'translate(-50%,-50%) scale(1)';
+        ring.style.transform   = 'translate(-50%,-50%) scale(1)';
+      });
+    });
+
+    // Scroll reveal
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => entry.target.classList.add('visible'), i * 60);
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    reveals.forEach(el => observer.observe(el));
+
+    // Active nav link highlight
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.nav-links a');
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(sec => {
+        if (window.scrollY >= sec.offsetTop - 200) current = sec.id;
+      });
+      navLinks.forEach(a => {
+        a.style.color = a.getAttribute('href') === '#' + current ? 'var(--accent)' : '';
+      });
+    });
+  </script>
+</body>
+</html>
